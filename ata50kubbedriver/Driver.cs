@@ -250,9 +250,12 @@ namespace ASCOM.ATA50KubbeDriver
 //
 //        
 //
+        //int connect; 
+        //connect degiskeninini simdilik kullanmiyoruz.. 
+
         //baglanma fonksiyonu tanimlamasi 
 
-        int connect; 
+       
 
         public void baglan()
         {
@@ -265,13 +268,13 @@ namespace ASCOM.ATA50KubbeDriver
                 ssh = new SshClient("10.141.3.110", "root", "ismail");
                 ssh.Connect();
                 status = true;
-                connect = 1;
+                //connect = 1;
             }
             catch
             {
                 status = false;
                 tl.LogMessage("hata", "baglanti hatasi, tekrar deneyin.. [uc kapak getirene bardak hediye..]");
-                connect = 0;
+                //connect = 0;
             
             }
 
@@ -291,6 +294,7 @@ namespace ASCOM.ATA50KubbeDriver
                 catch
                 { 
                 }
+
 
 
             }

@@ -28,6 +28,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 using ASCOM;
 using ASCOM.Astrometry;
@@ -121,7 +122,7 @@ namespace ASCOM.ATA50KubbeDriver
             ReadProfile(); // Read device configuration from the ASCOM Profile store
 
             tl = new TraceLogger("", "ATA50KubbeDriver");
-            tl.Enabled = true;
+            tl.Enabled = connectedState;
             tl.LogMessage("Dome", "baslatiliyor..wait..wait..wait..");
 
             connectedState = false; // Initialise connected to false
@@ -335,7 +336,7 @@ namespace ASCOM.ATA50KubbeDriver
                   int uzunluk = okunan.IndexOf(">") - bas;
                  
                   pinler = okunan.Substring(bas, uzunluk);
-                  //pinoku = pinler.select(c => c.ToString()).ToArray();
+                  pinoku = pinler.Select(c => c.ToString()).ToArray();
               }
               catch
               {
@@ -355,8 +356,6 @@ namespace ASCOM.ATA50KubbeDriver
 
                    komutgonder("kontrol");
                   
-
-
                    if (pinler[13] == '1')
                    {
                       tl.LogMessage("acik","kubbe acik konumdadir..");

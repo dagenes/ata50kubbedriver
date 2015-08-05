@@ -28,7 +28,6 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Text.RegularExpressions;
-using System.Linq;
 
 using ASCOM;
 using ASCOM.Astrometry;
@@ -66,20 +65,9 @@ namespace ASCOM.ATA50KubbeDriver
         string pinler;
         
         bool status;
+        static Renci.SshNet.SshClient ssh;
+        static Renci.SshNet.ShellStream stream;
 
-       // SshClient ssh = new SshClient("10.141.3.110","root","ismail");
-        ShellStream stream;
-        SshClient ssh = new SshClient("10.141.3.110", "root", "ismail");
-        //ssh = new SshClient("10.141.3.110", "root", "ismail");
-
-                  
-
-
-                        
-           
-                        //status = true;
-                        //connect = 1;
-                   
 
         /// <summary>
         /// ASCOM DeviceID (COM ProgID) for this driver.
@@ -131,16 +119,9 @@ namespace ASCOM.ATA50KubbeDriver
         public Dome()
         {
             ReadProfile(); // Read device configuration from the ASCOM Profile store
-            
+
             tl = new TraceLogger("", "ATA50KubbeDriver");
             tl.Enabled = true;
-            tl.LogMessage("Dome", "ssh oncesi");
-            ssh.Connect();
-            stream = ssh.CreateShellStream("xterm", 80, 50, 1024, 1024, 1024);
-            Thread.Sleep(100);
-            stream.WriteLine("telnet localhost 6571");
-            tl.LogMessage("Dome", "ssh sonrasi");
-            tl.LogMessage("Dome", ssh.IsConnected.ToString());
             tl.LogMessage("Dome", "baslatiliyor..wait..wait..wait..");
 
             connectedState = false; // Initialise connected to false
@@ -250,11 +231,10 @@ namespace ASCOM.ATA50KubbeDriver
 
                 if (value)
                 {
-                    
                     connectedState = true;
-                    tl.LogMessage("Connected Set", "xxxxxxConnecting to 10.141.3.110 ");
+                    tl.LogMessage("Connected Set", "Connecting to 10.141.3.110 ");
                     // TODO connect to the device
-                    
+                    ssh.Connect();
                 }
                 else
                 {
@@ -285,7 +265,6 @@ namespace ASCOM.ATA50KubbeDriver
             try
             {
 
-            
                 ssh = new SshClient("10.141.3.110", "root", "ismail");
                 ssh.Connect();
                 status = true;
@@ -356,7 +335,7 @@ namespace ASCOM.ATA50KubbeDriver
                   int uzunluk = okunan.IndexOf(">") - bas;
                  
                   pinler = okunan.Substring(bas, uzunluk);
-                  pinoku = pinler.Select(c => c.ToString()).ToArray();
+                  //pinoku = pinler.select(c => c.ToString()).ToArray();
               }
               catch
               {
@@ -376,6 +355,8 @@ namespace ASCOM.ATA50KubbeDriver
 
                    komutgonder("kontrol");
                   
+
+
                    if (pinler[13] == '1')
                    {
                       tl.LogMessage("acik","kubbe acik konumdadir..");
@@ -584,7 +565,6 @@ namespace ASCOM.ATA50KubbeDriver
         {
             if (ssh.IsConnected)
             {
-
                 tl.LogMessage("CloseShutter", "Kubbe kapatildi..");
                 domeShutterState = false;
             }
@@ -604,7 +584,7 @@ namespace ASCOM.ATA50KubbeDriver
         {
             if (ssh.IsConnected)
             {
-               // komutgonder("ileri");
+                komutgonder("ileri");
                 tl.LogMessage("OpenShutter", "Kubbe acildi");
                 domeShutterState = true;
             }
